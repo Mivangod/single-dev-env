@@ -1,0 +1,43 @@
+{{define "step1"}}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hello, World!</title>
+    <script>
+        function selectChoice(choice) {
+            // Send the selected choice to the server using AJAX
+            fetch('/choice', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ choice: choice })
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Handle the response from the server
+                if (data.success) {
+                    // Redirect to the next step
+                    window.location.href = '/step2/' + choice;
+                } else {
+                    // Handle error or display error message
+                    console.error('Error:', data.message);
+                }
+            })
+            .catch(error => {
+                // Handle network error
+                console.error('Network error:', error);
+            });
+        }
+    </script>
+</head>
+<body>
+    <p>Please choose between these options:</p>
+    {{range .choices}}
+        <button onclick="selectChoice('{{.}}')">{{.}}</button>
+    {{end}}
+</body>
+</html>
+{{end}}
